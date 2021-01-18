@@ -4,7 +4,7 @@ var MessageType = {CHAT:"CHAT",
         JOIN:"JOIN",
         LEAVE:"LEAVE"};
 
-var URL = {wsURL:"/ws", subURL:"/subscribe/", addUserURL:"/send/addUser", sendURL:"/send/sendMessage"};
+var URL = {wsURL:"/ws", subURL:"/subscribe/", sendURL:"/send/sendMessage"};
 var subscriptGroup = 'groupPublic';
 var subChannelID = undefined;
 var usernamePage = document.querySelector('#username-page');
@@ -50,10 +50,8 @@ function onConnected() {
     subChannelID = subObj.id;
     
     // Tell your username to the server
-    stompClient.send(URL.addUserURL,
-        {},
-        JSON.stringify({sender: username, type: MessageType.JOIN, group:subscriptGroup})
-    )
+    stompClient.send(URL.sendURL,{},JSON.stringify({sender: username, type: MessageType.JOIN, group:subscriptGroup}));
+    
     document.getElementById("cUserName").innerHTML = username;
     document.querySelector('input[name="ugroup"][value="'+subscriptGroup+'"]').checked = true;
     connectingElement.classList.add('hidden');

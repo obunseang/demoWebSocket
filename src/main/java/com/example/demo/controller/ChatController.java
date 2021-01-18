@@ -24,13 +24,4 @@ public class ChatController {
     public void sendMessage(@Payload ChatMessage chatMessage) {
     	 template.convertAndSend("/subscribe/" + chatMessage.getGroup(), chatMessage);
     }
-    
-    @MessageMapping("/addUser")
-    public void  addUser(@Payload ChatMessage chatMessage, 
-                               SimpMessageHeaderAccessor headerAccessor) {
-        // Add username in web socket session
-        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
-        headerAccessor.getSessionAttributes().put("usergroup", chatMessage.getGroup());
-        template.convertAndSend("/subscribe/" + chatMessage.getGroup(), chatMessage);
-    }
 }

@@ -12,6 +12,7 @@ import com.example.demo.model.ChatMessage;
 import com.example.demo.model.ChatMessage.MessageType;
 import com.example.demo.model.UserVO;
 import com.example.demo.registry.ChatUserRegistry;
+import com.example.demo.registry.GroupRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 public class WSHandler  implements ChannelInterceptor {
 	@Autowired
     private ChatUserRegistry mUserRegistry;
+	@Autowired
+	private GroupRegistry mGroupRegistry;
 	
 	@Override
 	public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
@@ -34,13 +37,15 @@ public class WSHandler  implements ChannelInterceptor {
             case DISCONNECT:
                 // 유저가 Websocket으로 disconnect() 를 한 뒤 호출됨 or 세션이 끊어졌을 때 발생함(페이지 이동~ 브라우저 닫기 등)
             	log.info("Stomp Handler DISCONNECT");
+            	mGroupRegistry.ClearDisConUser(accessor);
                 mUserRegistry.disconnectUser(accessor);
                 break;
             case SUBSCRIBE:
-            	String dest = accessor.getDestination();
-            	log.info("Stomp Handler SUBSCRIBE : "+dest);
-            	accessor.getSessionAttributes().put("usergroup", dest);
+            	mGroupRegistry.setSubGroup(accessor);
                 break;
+            case UNSUBSCRIBE:
+            	mGroupRegistry.setUnSubGroup(accessor);
+            	break;
             case MESSAGE:
             	log.info("Stomp Handler MESSAGE");
                 break;

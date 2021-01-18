@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ public class WSEventListener {
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
-
+    
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         logger.info("Received a new web socket connection");
@@ -28,18 +30,20 @@ public class WSEventListener {
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-
-        String username = (String) headerAccessor.getSessionAttributes().get("username");
-        String usergroup = (String) headerAccessor.getSessionAttributes().get("usergroup");
-        logger.info("User : "+username+" Disconnected : "+usergroup);
-        logger.info("Received a new web socket connection");
-        
-        if(username != null) {
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(MessageType.LEAVE);
-            chatMessage.setSender(username);
-            messagingTemplate.convertAndSend("/subscribe/"+usergroup, chatMessage);
-        }
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+        String userName = (String) accessor.getSessionAttributes().get("username");
+		if(userName!=null && !userName.isEmpty()) {						
+	        for( Map.Entry<String, Object> elem : accessor.getSessionAttributes().entrySet() ){
+	        	if(!elem.getKey().equals(userName) && !elem.getKey().contains(userName)){
+	        		String subGroupDest = (String)elem.getValue();
+	        		logger.info("User : "+userName+" Disconnected : "+subGroupDest);	         
+					ChatMessage chatMessage = new ChatMessage();
+					chatMessage.setType(MessageType.LEAVE);
+					chatMessage.setSender(userName);
+					messagingTemplate.convertAndSend(subGroupDest, chatMessage);		          
+	        		logger.info( String.format("key : %s, value : %s", elem.getKey(), subGroupDest) );	            
+	        	}
+	        }
+		}		
     }
 }

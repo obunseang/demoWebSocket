@@ -59,7 +59,7 @@ public class ChatUserRegistry {
 			if (!ObjectUtils.isEmpty(accessor)) {
 				final String userId = getUserId(accessor);
 				final String sessionId = accessor.getSessionId();
-
+				accessor.getSessionAttributes().put("username", userId);
 				if (!ObjectUtils.isEmpty(userId) && !ObjectUtils.isEmpty(sessionId)) {
 
 					UserVO userVO = mUserMap.get(userId);

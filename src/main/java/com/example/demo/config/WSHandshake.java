@@ -16,14 +16,14 @@ public class WSHandshake implements HandshakeInterceptor {
 	   public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
 	                               WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
 	    // Set ip attribute to WebSocket session
-	    if (request instanceof ServletServerHttpRequest) {
-	        ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-	        String ipAddress = servletRequest.getServletRequest().getHeader("X-FORWARDED-FOR");
-	        if (ipAddress == null) {
-	            ipAddress = servletRequest.getServletRequest().getRemoteAddr();
-	        }
-	        attributes.put("ip", ipAddress);
-	    }
+//	    if (request instanceof ServletServerHttpRequest) {
+//	        ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+//	        String ipAddress = servletRequest.getServletRequest().getHeader("X-FORWARDED-FOR");
+//	        if (ipAddress == null) {
+//	            ipAddress = servletRequest.getServletRequest().getRemoteAddr();
+//	        }
+//	        attributes.put("ip", ipAddress);
+//	    }
 	    return true;
 	}
 	public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
