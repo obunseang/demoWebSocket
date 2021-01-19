@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import com.example.demo.model.ChatMessage;
 import com.example.demo.model.UserVO;
 import com.example.demo.model.ChatMessage.MessageType;
+import com.example.demo.model.ContractMessage;
 import com.example.demo.registry.ChatUserRegistry;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,20 +34,27 @@ public class SchedulerAlarm {
 	public void sendAlarmMesssage() {
 		if(mUserRegistry.userMapSize() > 0)
 		{				
-//			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
-//			Date date = new Date();  
-//			String datetime = formatter.format(date);
-//			ChatMessage chatMessage = new ChatMessage();
-//			chatMessage.setType(MessageType.CHAT);
-//			chatMessage.setSender("Server Alarm");
-//			chatMessage.setContent(datetime);
-//			Set<UserVO> userList = mUserRegistry.getUsers();
-//			Iterator<UserVO> iter = userList.iterator();
-//			while(iter.hasNext()) {
-//				UserVO user = iter.next();			    
-//				template.convertAndSend("/subscribe/"+user.getUserName(), chatMessage);
-//			}
-//			log.info("==========================Server sent alarm message at {}============================",datetime);
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
+			Date date = new Date();  
+			String datetime = formatter.format(date);
+			ChatMessage chatMessage = new ChatMessage();
+			chatMessage.setType(MessageType.CHAT);
+			chatMessage.setSender("Server Alarm");
+			chatMessage.setContent(datetime);
+			Set<UserVO> userList = mUserRegistry.getUsers();
+			Iterator<UserVO> iter = userList.iterator();
+			
+			ContractMessage msg = new ContractMessage();
+			msg.setContractNo("N5670413");
+			msg.setCrtNo("4160001-00");
+			msg.setStatus("1");
+			
+			while(iter.hasNext()) {
+				UserVO user = iter.next();			    
+				template.convertAndSend("/subscribe/"+user.getUserName(), chatMessage);
+				template.convertAndSend("/subscribe/"+user.getUserName(), msg);
+			}
+			log.info("==========================Server sent alarm message at {}============================",datetime);
 		}
 	}
 }

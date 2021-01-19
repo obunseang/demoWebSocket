@@ -90,6 +90,9 @@ function IsJsonString(str) {
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
+    
+    if(!message.hasOwnProperty("type")) return;
+    
     var messageElement = document.createElement('li');
 
     if(message.type === MessageType.JOIN) {
