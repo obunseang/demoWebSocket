@@ -21,57 +21,65 @@ public class GroupRegistry {
 	private Map<String, List<UserVO>> mGroupMap = new HashMap<>();
 	public void setSubGroup(final StompHeaderAccessor accessor) {
 		String subGroupDest = accessor.getDestination();
-		accessor.getSessionAttributes().put(accessor.getSubscriptionId(), subGroupDest);
-		String UserName = (String) accessor.getSessionAttributes().get("username");
-		if(!subGroupDest.isEmpty() && !UserName.isEmpty()) {
-			List<UserVO> list = mGroupMap.get(subGroupDest);			
-			if(list == null)
-			{
-				list = new ArrayList<>();
-				UserVO u = UserVO.builder().userName(UserName).build();
-				list.add(u);
-				mGroupMap.put(subGroupDest, list);
-			}
-			else
-			{
-				boolean found = false;
-				for(int i=0;i<list.size();i++) {
-					UserVO isUser = list.get(i);
-					if(isUser.getUserName().equals(UserName)){
-						found = true;
-						break;
-					}
-				}
-				if(!found)
-				{					
+		if(subGroupDest.contains("contract"))
+		{			
+			accessor.getSessionAttributes().put(accessor.getSubscriptionId(), subGroupDest);
+			String UserName = (String) accessor.getSessionAttributes().get("username");
+			if(!subGroupDest.isEmpty() && !UserName.isEmpty()) {
+				List<UserVO> list = mGroupMap.get(subGroupDest);			
+				if(list == null)
+				{
+					list = new ArrayList<>();
 					UserVO u = UserVO.builder().userName(UserName).build();
 					list.add(u);
+					mGroupMap.put(subGroupDest, list);
 				}
+				else
+				{
+					boolean found = false;
+					for(int i=0;i<list.size();i++) {
+						UserVO isUser = list.get(i);
+						if(isUser.getUserName().equals(UserName)){
+							found = true;
+							break;
+						}
+					}
+					if(!found)
+					{					
+						UserVO u = UserVO.builder().userName(UserName).build();
+						list.add(u);
+					}
+				}
+				log.info(subGroupDest+ " =============Sub List Size:"+list.size());
 			}
 		}
 	}	
 	public void setUnSubGroup(final StompHeaderAccessor accessor) {
 		String subscriptionId = accessor.getSubscriptionId();
 		String subGroupDest = (String) accessor.getSessionAttributes().get(subscriptionId);
-		accessor.getSessionAttributes().remove(accessor.getSubscriptionId());
-		String UserName = (String) accessor.getSessionAttributes().get("username");
-		if(subGroupDest!= null && !subGroupDest.isEmpty())
-		{			
-			List<UserVO> list = mGroupMap.get(subGroupDest);
-			if(list != null)
-			{
-				for(int i=0;i<list.size();i++) {
-					UserVO u = list.get(i);
-					if(u.getUserName().equals(UserName)){
-						list.remove(i);
-						break;
+		if(subGroupDest.contains("contract"))
+		{
+			accessor.getSessionAttributes().remove(accessor.getSubscriptionId());
+			String UserName = (String) accessor.getSessionAttributes().get("username");
+			if(subGroupDest!= null && !subGroupDest.isEmpty())
+			{			
+				List<UserVO> list = mGroupMap.get(subGroupDest);
+				if(list != null)
+				{
+					for(int i=0;i<list.size();i++) {
+						UserVO u = list.get(i);
+						if(u.getUserName().equals(UserName)){
+							list.remove(i);
+							break;
+						}
 					}
+					log.info(subGroupDest+ " =============Un===========Sub List Size:"+list.size());
 				}
-			}
-			if(list.size() == 0) {		
-				mGroupMap.remove(subGroupDest);
-			}
-		}			
+				if(list.size() == 0) {		
+					mGroupMap.remove(subGroupDest);
+				}
+			}			
+		}
 	}
 	public void ClearDisConUser(final StompHeaderAccessor accessor) {
 		String userName = (String) accessor.getSessionAttributes().get("username");
@@ -90,6 +98,7 @@ public class GroupRegistry {
 	    						break;
 	    					}
 	    				}
+	    				log.info(subGroupDest+ " =============Un===========Sub List Size:"+list.size());
 	    			}	            
 	        	}
 	        }
