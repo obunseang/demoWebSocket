@@ -22,6 +22,6 @@ public class ChatController {
 	
     @MessageMapping("/sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage) {
-    	 template.convertAndSend("/subscribe/" + chatMessage.getGroup(), chatMessage);
+    	 template.convertAndSend("/subscribe/contract/" + chatMessage.getGroup(), chatMessage);
     }
 }
