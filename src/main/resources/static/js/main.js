@@ -46,7 +46,7 @@ function onConnected() {
     stompClient.subscribe(URL.subURL+username, onMessageReceived);
     
 	// Subscribe to the Public Topic
-    let subObj = stompClient.subscribe(URL.subURL+subscriptGroup, onMessageReceived);
+    let subObj = stompClient.subscribe(URL.subURL+"contract/"+subscriptGroup, onMessageReceived);
     subChannelID = subObj.id;
     
     // Tell your username to the server
@@ -158,7 +158,7 @@ for(var i = 0, max = radios.length; i < max; i++) {
 	        console.log(subscriptGroup);
 	        // Subscribe to the Public Topic
 	        stompClient.unsubscribe(subChannelID);
-	    	const subObj = stompClient.subscribe(URL.subURL+subscriptGroup, onMessageReceived);
+	    	const subObj = stompClient.subscribe(URL.subURL+"contract/"+subscriptGroup, onMessageReceived);
 	    	subChannelID = subObj.id;
 	    }
     });
